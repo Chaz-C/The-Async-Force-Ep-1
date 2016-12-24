@@ -1,20 +1,30 @@
 // jshint esversion: 6
-console.log('howdy');
-
-function personReq(url, id) {
+function personReq(url, id, id2) {
   requestHelper(url, writeToBrowser);
 
   function writeToBrowser() {
     let person = JSON.parse(this.responseText);
     document.getElementById(id).innerHTML = person.name;
+
+    if ( person.name === 'Darth Vader' ) {
+      requestHelper(person.homeworld, writeToBrowser2);
+    } else {
+      requestHelper(person.species[0], writeToBrowser2);
+    }
+
+    function writeToBrowser2() {
+      let person2 = JSON.parse(this.responseText);
+      document.getElementById(id2).innerHTML = person2.name;
+    }
   }
 }
+
+
 
 function planetsReq(url, element) {
   requestHelper(url, listPlanets);
 
   function listPlanets() {
-    console.log(this.responseText);
     let planetName = JSON.parse(this.responseText).name;
     let liPlanet = document.createElement('li');
     liPlanet.className = 'planet';
@@ -50,10 +60,8 @@ function requestHelper(link, listener) {
   newReq.send();
 }
 
-personReq('http://swapi.co/api/people/4/', 'person4Name');
-personReq('http://swapi.co/api/planets/1/', 'person4HomeWorld');
-personReq('http://swapi.co/api/people/14/', 'person14Name');
-personReq('http://swapi.co/api/species/1/', 'person14Species');
+personReq('http://swapi.co/api/people/4/', 'person4Name', 'person4HomeWorld');
+personReq('http://swapi.co/api/people/14/', 'person14Name', 'person14Species');
 requestHelper('http://swapi.co/api/films/', filmTitleReq);
 
 
